@@ -1,0 +1,47 @@
+# Ignore build and local artifacts
+build/
+cmake-build-*/
+cpp/build/
+out/
+.vs/
+.vscode/
+.idea/
+*.user
+*.o
+*.obj
+*.dll
+*.a
+*.lib
+*.pdb
+
+# Python
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.hypothesis/
+*.egg-info/
+dist/
+
+# Node / TS
+node_modules/
+tools/dist/
+tools/node_modules/
+viz/node_modules/
+
+# Local reports (keep committed examples + .gitkeep)
+reports/*
+!reports/.gitkeep
+!docs/reports/examples/**
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Secrets / local
+.env
+.env.*
+*.pem
+credentials*

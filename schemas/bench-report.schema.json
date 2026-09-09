@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://proofrun.dev/schemas/bench-report.schema.json",
+  "title": "ProofRun BenchReport",
+  "type": "object",
+  "required": ["schemaVersion", "profile", "environment", "results"],
+  "properties": {
+    "schemaVersion": { "type": "string", "const": "1.0" },
+    "profile": { "type": "string" },
+    "environment": { "type": "object" },
+    "results": { "type": "array" },
+    "notes": { "type": "string" }
+  },
+  "additionalProperties": true
+}

@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://proofrun.dev/schemas/algorithm-manifest.schema.json",
+  "title": "ProofRun Algorithm Catalog",
+  "type": "object",
+  "required": ["schemaVersion", "algorithms"],
+  "properties": {
+    "schemaVersion": { "type": "string" },
+    "algorithms": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "family",
+          "complexity",
+          "explanation",
+          "visualizable",
+          "benchmarkable",
+          "traceable",
+          "status"
+        ],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "name": { "type": "string" },
+          "family": { "type": "string" },
+          "complexity": {
+            "type": "object",
+            "required": ["best", "avg", "worst", "memory"],
+            "properties": {
+              "best": { "type": "string" },
+              "avg": { "type": "string" },
+              "worst": { "type": "string" },
+              "memory": { "type": "string" }
+            }
+          },
+          "explanation": { "type": "string" },
+          "visualizable": { "type": "boolean" },
+          "benchmarkable": { "type": "boolean" },
+          "traceable": { "type": "boolean" },
+          "status": {
+            "type": "string",
+            "enum": ["implemented", "planned", "deprecated"]
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

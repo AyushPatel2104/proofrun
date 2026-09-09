@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "proofrun-py"
+version = "0.1.0"
+description = "ProofRun Python verification and harness layer"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+  "pytest>=7.0",
+  "hypothesis>=6.0",
+  "jsonschema>=4.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["proofrun_py*"]

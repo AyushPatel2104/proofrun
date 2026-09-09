@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://proofrun.dev/schemas/execution-trace.schema.json",
+  "title": "ProofRun ExecutionTrace",
+  "type": "object",
+  "required": ["schemaVersion", "algorithmId", "events", "finalState", "meta"],
+  "properties": {
+    "schemaVersion": { "type": "string", "const": "1.0" },
+    "algorithmId": { "type": "string", "minLength": 1 },
+    "seed": { "type": ["integer", "null"] },
+    "fixtureId": { "type": "string" },
+    "inputSummary": { "type": "object" },
+    "manifestSnapshot": { "type": "object" },
+    "initialState": { "type": "object" },
+    "events": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["step", "type"],
+        "properties": {
+          "step": { "type": "integer", "minimum": 0 },
+          "type": { "type": "string" },
+          "ts": { "type": "integer" },
+          "payload": { "type": "object" },
+          "message": { "type": "string" }
+        }
+      }
+    },
+    "finalState": { "type": "object" },
+    "meta": {
+      "type": "object",
+      "required": ["producer", "producerVersion"],
+      "properties": {
+        "producer": { "type": "string" },
+        "producerVersion": { "type": "string" },
+        "createdAtUtc": { "type": "string" }
+      }
+    }
+  },
+  "additionalProperties": true
+}

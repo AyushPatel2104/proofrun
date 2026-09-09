@@ -1,0 +1,165 @@
+{
+  "schemaVersion": "1.0",
+  "algorithms": [
+    {
+      "id": "sort.bubblesort",
+      "name": "Bubble Sort",
+      "family": "sorting",
+      "complexity": {
+        "best": "O(n)",
+        "avg": "O(n^2)",
+        "worst": "O(n^2)",
+        "memory": "O(1)"
+      },
+      "explanation": "Repeatedly swap adjacent out-of-order pairs until the array is sorted.",
+      "visualizable": true,
+      "benchmarkable": true,
+      "traceable": true,
+      "status": "implemented"
+    },
+    {
+      "id": "sort.insertionsort",
+      "name": "Insertion Sort",
+      "family": "sorting",
+      "complexity": {
+        "best": "O(n)",
+        "avg": "O(n^2)",
+        "worst": "O(n^2)",
+        "memory": "O(1)"
+      },
+      "explanation": "Build a sorted prefix by inserting each next element into its place.",
+      "visualizable": true,
+      "benchmarkable": true,
+      "traceable": true,
+      "status": "implemented"
+    },
+    {
+      "id": "sort.selectionsort",
+      "name": "Selection Sort",
+      "family": "sorting",
+      "complexity": {
+        "best": "O(n^2)",
+        "avg": "O(n^2)",
+        "worst": "O(n^2)",
+        "memory": "O(1)"
+      },
+      "explanation": "Repeatedly select the minimum of the unsorted suffix and swap it into place.",
+      "visualizable": true,
+      "benchmarkable": true,
+      "traceable": true,
+      "status": "implemented"
+    },
+    {
+      "id": "sort.mergesort",
+      "name": "Merge Sort",
+      "family": "sorting",
+      "complexity": {
+        "best": "O(n log n)",
+        "avg": "O(n log n)",
+        "worst": "O(n log n)",
+        "memory": "O(n)"
+      },
+      "explanation": "Divide the array, sort halves, then merge sorted runs.",
+      "visualizable": true,
+      "benchmarkable": true,
+      "traceable": true,
+      "status": "implemented"
+    },
+    {
+      "id": "sort.quicksort",
+      "name": "Quick Sort",
+      "family": "sorting",
+      "complexity": {
+        "best": "O(n log n)",
+        "avg": "O(n log n)",
+        "worst": "O(n^2)",
+        "memory": "O(log n)"
+      },
+      "explanation": "Partition around a pivot and recurse on both sides (Lomuto partition in this build).",
+      "visualizable": true,
+      "benchmarkable": true,
+      "traceable": true,
+      "status": "implemented"
+    },
+    {
+      "id": "search.linear_search",
+      "name": "Linear Search",
+      "family": "searching",
+      "complexity": {
+        "best": "O(1)",
+        "avg": "O(n)",
+        "worst": "O(n)",
+        "memory": "O(1)"
+      },
+      "explanation": "Scan left to right until the target equals an element; return first index or -1.",
+      "visualizable": true,
+      "benchmarkable": true,
+      "traceable": true,
+      "status": "implemented"
+    },
+    {
+      "id": "search.binary_search",
+      "name": "Binary Search",
+      "family": "searching",
+      "complexity": {
+        "best": "O(1)",
+        "avg": "O(log n)",
+        "worst": "O(log n)",
+        "memory": "O(1)"
+      },
+      "explanation": "Halve a sorted search interval using low/mid/high until the target is found or the interval is empty. Requires nondecreasing input.",
+      "visualizable": true,
+      "benchmarkable": true,
+      "traceable": true,
+      "status": "implemented"
+    },
+    {
+      "id": "array.two_pointer",
+      "name": "Two Pointer (Two Sum Sorted)",
+      "family": "arrays",
+      "complexity": {
+        "best": "O(1)",
+        "avg": "O(n)",
+        "worst": "O(n)",
+        "memory": "O(1)"
+      },
+      "explanation": "On a sorted array, advance left/right pointers to find a pair summing to a target in linear time.",
+      "visualizable": true,
+      "benchmarkable": true,
+      "traceable": true,
+      "status": "implemented"
+    },
+    {
+      "id": "array.sliding_window",
+      "name": "Sliding Window (Max Sum Fixed K)",
+      "family": "arrays",
+      "complexity": {
+        "best": "O(n)",
+        "avg": "O(n)",
+        "worst": "O(n)",
+        "memory": "O(1)"
+      },
+      "explanation": "Maintain a fixed-length window sum while sliding right, updating the maximum contiguous sum of length K.",
+      "visualizable": true,
+      "benchmarkable": true,
+      "traceable": true,
+      "status": "implemented"
+    },
+    {
+      "id": "array.prefix_sum",
+      "name": "Prefix Sum (Range Query)",
+      "family": "arrays",
+      "complexity": {
+        "best": "O(n)",
+        "avg": "O(n)",
+        "worst": "O(n)",
+        "memory": "O(n)"
+      },
+      "explanation": "Precompute prefix totals so any inclusive range sum answers in O(1) after O(n) build.",
+      "visualizable": true,
+      "benchmarkable": true,
+      "traceable": true,
+      "status": "implemented"
+    }
+  ]
+}

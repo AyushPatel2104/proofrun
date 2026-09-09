@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="dark light" />
+  <title>ProofRun — Algorithm Verification &amp; Performance Intelligence</title>
+  <script>
+    (function () {
+      try {
+        var params = new URLSearchParams(window.location.search);
+        var fromQuery = params.get("theme");
+        var stored = localStorage.getItem("proofrun-theme");
+        var theme =
+          fromQuery === "light" || fromQuery === "dark"
+            ? fromQuery
+            : stored || (window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark");
+        document.documentElement.setAttribute("data-theme", theme === "light" ? "light" : "dark");
+      } catch (e) {
+        document.documentElement.setAttribute("data-theme", "dark");
+      }
+    })();
+  </script>
+  <link rel="stylesheet" href="styles/main.css" />
+</head>
+<body>
+  <div class="app-bg" aria-hidden="true">
+    <canvas id="bgCanvas" class="bg-canvas"></canvas>
+  </div>
+
+  <a class="skip-link" href="#workspace">Skip to workspace</a>
+
+  <header class="app-shell" role="banner">
+    <div class="shell-inner">
+      <a class="shell-brand" href="#home">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span class="brand-text">ProofRun</span>
+      </a>
+      <nav class="shell-nav" aria-label="Primary">
+        <a href="#workspace">Workspace</a>
+        <a href="#explore">Explore</a>
+        <a href="#benchmarks">Benchmarks</a>
+        <a href="#docs">Docs</a>
+      </nav>
+      <div class="shell-actions">
+        <p id="serverStatus" class="engine-pill" role="status" aria-live="polite">Checking engine…</p>
+        <button type="button" id="themeToggle" class="theme-toggle" aria-label="Toggle color theme" title="Toggle theme">
+          <span class="theme-icon theme-icon-dark" aria-hidden="true">◐</span>
+          <span class="theme-label">Theme</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <section id="home" class="landing" aria-labelledby="landing-title">
+    <div class="landing-inner">
+      <div class="landing-copy">
+        <p class="eyebrow">Local algorithm laboratory</p>
+        <h1 id="landing-title" class="brand-hero">ProofRun</h1>
+        <p class="subtitle">Algorithm Verification &amp; Performance Intelligence</p>
+        <p class="core-message">Run algorithms. See every step. Verify every result. Measure performance.</p>
+        <div class="landing-cta">
+          <a class="btn btn-primary" href="#workspace">Open Workspace</a>
+          <a class="btn btn-secondary" href="#explore">Try an Example</a>
+        </div>
+      </div>
+      <div class="landing-side">
+        <div class="pillars" role="list">
+          <article class="pillar" role="listitem">
+            <h2>SEE</h2>
+            <p>ExecutionTrace, step by step.</p>
+          </article>
+          <article class="pillar" role="listitem">
+            <h2>PROVE</h2>
+            <p>Independent oracle verification.</p>
+          </article>
+          <article class="pillar" role="listitem">
+            <h2>MEASURE</h2>
+            <p>Labeled performance measurement.</p>
+          </article>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="explore" class="explore-section" aria-labelledby="explore-heading">
+    <div class="section-inner">
+      <div class="section-head">
+        <h2 id="explore-heading">Try an Example</h2>
+        <p>Load a real canned ExecutionTrace (replay only). Live Prove / Measure still require Run in the workspace.</p>
+      </div>
+      <div class="example-grid" role="list">
+        <button type="button" class="example-card" data-example="public/traces/sort.bubblesort__demo.trace.json" data-algo="sort.bubblesort" role="listitem">
+          <span class="ex-family">Sorting</span>
+          <span class="ex-name">Bubble Sort</span>
+          <span class="ex-desc">Adjacent swaps until the array is ordered.</span>
+          <span class="ex-meta">Canned demo · replay</span>
+        </button>
+        <button type="button" class="example-card" data-example="public/traces/search.binary_search__demo.trace.json" data-algo="search.binary_search" role="listitem">
+          <span class="ex-family">Searching</span>
+          <span class="ex-name">Binary Search</span>
+          <span class="ex-desc">Halve the search space on a sorted array.</span>
+          <span class="ex-meta">Canned demo · replay</span>
+        </button>
+        <button type="button" class="example-card" data-example="public/traces/array.sliding_window__demo.trace.json" data-algo="array.sliding_window" role="listitem">
+          <span class="ex-family">Arrays</span>
+          <span class="ex-name">Sliding Window</span>
+          <span class="ex-desc">Maintain a moving window over contiguous elements.</span>
+          <span class="ex-meta">Canned demo · replay</span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <main id="workspace" class="workspace" aria-label="Analysis workspace">
+    <ol class="workspace-flow" aria-label="Workspace stages">
+      <li><span class="flow-label">Input</span></li>
+      <li><span class="flow-label">Execution</span></li>
+      <li><span class="flow-label">Analysis</span></li>
+    </ol>
+
+    <section class="panel setup-panel" aria-labelledby="setup-heading">
+      <div class="panel-head">
+        <span class="step-num" aria-hidden="true">1</span>
+        <h2 id="setup-heading">Select &amp; Input</h2>
+      </div>
+
+      <div class="algo-context" id="algoContext">
+        <div class="algo-title-row">
+          <h3 id="algoContextName">—</h3>
+          <span id="algoContextFamily" class="chip">—</span>
+        </div>
+        <p id="explanation" class="algo-desc"></p>
+        <dl id="algoComplexityMini" class="complexity-mini" aria-label="Catalog complexity"></dl>
+      </div>
+
+      <label class="field" for="algoSelect">Algorithm
+        <select id="algoSelect"></select>
+      </label>
+      <p id="precondition" class="callout" role="status"></p>
+
+      <label class="field" for="inputEditor">Input array
+        <span class="field-hint">Comma-separated integers · traced runs capped at 64 elements</span>
+        <textarea id="inputEditor" rows="3" placeholder="Example: 7, 3, 9, 1, 5, 2, 8, 4" spellcheck="false"></textarea>
+      </label>
+
+      <div id="paramFields" class="params"></div>
+
+      <div class="gen-bar" role="group" aria-label="Generate input">
+        <label class="field compact" for="genKind">Pattern
+          <select id="genKind">
+            <option value="random">random</option>
+            <option value="sorted">sorted</option>
+            <option value="reverse">reverse</option>
+            <option value="duplicates">duplicates</option>
+            <option value="negatives">negatives</option>
+            <option value="single">single</option>
+          </select>
+        </label>
+        <label class="field compact" for="genN">n
+          <input id="genN" type="number" min="0" max="64" value="8" />
+        </label>
+        <label class="field compact" for="genSeed">seed
+          <input id="genSeed" type="number" value="42" />
+        </label>
+        <button id="btnGenerate" type="button" class="btn-secondary">Generate Input</button>
+      </div>
+
+      <div class="action-row">
+        <button id="btnRun" type="button" class="btn btn-primary btn-run">Run</button>
+        <span id="runStatus" class="inline-status" aria-live="polite"></span>
+      </div>
+      <pre id="formError" class="error" hidden role="alert"></pre>
+
+      <details class="demos">
+        <summary>More canned demo traces</summary>
+        <label class="field" for="traceSelect">Demo trace
+          <select id="traceSelect">
+            <option value="">—</option>
+            <option value="public/traces/sort.bubblesort__demo.trace.json">Bubble Sort demo</option>
+            <option value="public/traces/sort.insertionsort__demo.trace.json">Insertion Sort demo</option>
+            <option value="public/traces/sort.selectionsort__demo.trace.json">Selection Sort demo</option>
+            <option value="public/traces/sort.mergesort__demo.trace.json">Merge Sort demo</option>
+            <option value="public/traces/sort.quicksort__demo.trace.json">Quick Sort demo</option>
+            <option value="public/traces/search.linear_search__demo.trace.json">Linear Search demo</option>
+            <option value="public/traces/search.binary_search__demo.trace.json">Binary Search demo</option>
+            <option value="public/traces/array.two_pointer__demo.trace.json">Two Pointer demo</option>
+            <option value="public/traces/array.sliding_window__demo.trace.json">Sliding Window demo</option>
+            <option value="public/traces/array.prefix_sum__demo.trace.json">Prefix Sum demo</option>
+          </select>
+        </label>
+      </details>
+    </section>
+
+    <section class="panel canvas-panel" aria-labelledby="see-heading">
+      <div class="panel-head">
+        <span class="step-num" aria-hidden="true">2</span>
+        <h2 id="see-heading">See Execution</h2>
+        <span id="execStatus" class="chip chip-quiet">Idle</span>
+      </div>
+
+      <div class="viz-stage">
+        <div id="vizEmpty" class="empty-state" role="status">
+          <p class="empty-kicker">Execution stage</p>
+          <p class="empty-title">Ready to visualize</p>
+          <p class="empty-body">Run an algorithm to inspect its execution step by step.</p>
+          <p class="empty-cta">Or open <a href="#explore">Try an Example</a> for a canned replay.</p>
+        </div>
+        <canvas id="arrayCanvas" width="960" height="380" aria-label="Array visualization" hidden></canvas>
+      </div>
+      <div id="legend" class="legend" aria-label="Highlight legend"></div>
+
+      <div class="player-bar">
+        <div class="controls" role="group" aria-label="Player controls">
+          <button id="btnReset" type="button" aria-label="Reset to start">Reset</button>
+          <button id="btnStep" type="button" aria-label="Step forward one event">Step</button>
+          <button id="btnPlay" type="button" aria-label="Play execution">Play</button>
+          <button id="btnPause" type="button" aria-label="Pause execution">Pause</button>
+          <label class="speed-label" for="speed">Speed
+            <input id="speed" type="range" min="50" max="1000" step="50" value="350" aria-valuemin="50" aria-valuemax="1000" />
+          </label>
+        </div>
+        <div class="step-meta">
+          <p id="stepInfo" class="step-badge" aria-live="polite">No execution loaded</p>
+          <p id="eventInfo" class="event-desc" aria-live="polite"></p>
+        </div>
+      </div>
+    </section>
+
+    <aside class="panel side analysis-panel" aria-labelledby="result-heading">
+      <div class="panel-head">
+        <span class="step-num" aria-hidden="true">3</span>
+        <h2 id="result-heading">Result / Analysis</h2>
+      </div>
+
+      <div class="analysis-block" aria-labelledby="result-block-title">
+        <h3 id="result-block-title" class="block-title">Summary</h3>
+        <dl class="summary-grid">
+          <div><dt>Algorithm</dt><dd id="algoName">—</dd></div>
+          <div><dt>Input</dt><dd id="inputSummary">—</dd></div>
+          <div><dt>Output</dt><dd id="resultText">Run an algorithm to see output.</dd></div>
+          <div><dt>Trace events</dt><dd id="eventCount">—</dd></div>
+        </dl>
+      </div>
+
+      <div class="analysis-block prove-block" aria-labelledby="prove-heading">
+        <h3 id="prove-heading" class="block-title">Prove</h3>
+        <div class="status-card" id="proveCard">
+          <p id="proveStatus" class="status-badge idle" role="status">Awaiting run</p>
+          <p id="proveMethod" class="status-sub">Independent oracle comparison</p>
+          <p id="proveDetail" class="status-detail"></p>
+        </div>
+        <p class="fine-print">
+          Practical correctness verification against an independent reference/oracle —
+          not a formal mathematical proof.
+        </p>
+      </div>
+
+      <div class="analysis-block" aria-labelledby="complexity-heading">
+        <h3 id="complexity-heading" class="block-title">Complexity</h3>
+        <dl class="complexity-grid" id="complexityGrid">
+          <div><dt>Best</dt><dd id="cxBest">—</dd></div>
+          <div><dt>Average</dt><dd id="cxAvg">—</dd></div>
+          <div><dt>Worst</dt><dd id="cxWorst">—</dd></div>
+          <div><dt>Space</dt><dd id="cxMem">—</dd></div>
+        </dl>
+        <p id="complexity" class="visually-hidden">—</p>
+      </div>
+
+      <div id="benchmarks" class="analysis-block measure-block" aria-labelledby="measure-heading">
+        <h3 id="measure-heading" class="block-title">Measure</h3>
+        <div class="measure-card">
+          <p class="measure-label">Interactive Run</p>
+          <p id="interactiveTiming" class="measure-value muted-value">—</p>
+          <p class="fine-print">
+            Wall time for this single Run (includes process start). Not equivalent to rigorous benchmarking.
+          </p>
+        </div>
+        <div class="measure-card">
+          <p class="measure-label">Controlled Benchmark</p>
+          <p id="benchStatus" class="measure-value muted-value">Not run yet</p>
+          <p class="fine-print">Run a controlled benchmark to compare repeated measurements.</p>
+          <button id="btnBench" type="button" class="btn-secondary">Run Controlled Benchmark</button>
+          <pre id="benchOut" class="bench-out" hidden></pre>
+        </div>
+      </div>
+
+      <div class="analysis-block inspector-block" aria-labelledby="inspector-heading">
+        <h3 id="inspector-heading" class="block-title">Inspector</h3>
+        <div id="inspectorEmpty" class="empty-state compact">
+          <p class="empty-title">No event selected</p>
+          <p class="empty-body">Run an algorithm to inspect execution state.</p>
+        </div>
+        <pre id="inspector" hidden></pre>
+      </div>
+
+      <p class="limits">Trusted catalog algorithms only. No arbitrary native code. Inputs validated; traced runs capped at 64 elements.</p>
+    </aside>
+
+    <section class="panel timeline-wrap" aria-labelledby="timeline-heading">
+      <div class="panel-head">
+        <h2 id="timeline-heading">Event Timeline</h2>
+        <p class="panel-sub">Real ExecutionTrace events from the engine</p>
+      </div>
+      <div id="timelineEmpty" class="empty-state compact">
+        <p class="empty-title">No execution events yet</p>
+        <p class="empty-body">Run an algorithm to populate the execution history.</p>
+      </div>
+      <ol id="timeline" class="timeline" hidden></ol>
+    </section>
+  </main>
+
+  <section id="docs" class="docs-section" aria-labelledby="docs-heading">
+    <div class="section-inner">
+      <div class="section-head">
+        <h2 id="docs-heading">Docs</h2>
+        <p>Local product notes. Full repository documentation ships with the source tree.</p>
+      </div>
+      <div class="docs-grid">
+        <article class="docs-card">
+          <h3>Workflow</h3>
+          <p>Select → Input → Run → See → Prove → Measure. Visualization consumes real ExecutionTrace JSON (schemaVersion 1.0).</p>
+        </article>
+        <article class="docs-card">
+          <h3>Security</h3>
+          <p>Catalog algorithms only. Fixed trusted CLI. Validated inputs and size caps. No arbitrary native execution.</p>
+        </article>
+        <article class="docs-card">
+          <h3>Benchmarks</h3>
+          <p>Interactive timing ≠ controlled repeats ≠ Google Benchmark microbenchmarks. Labels stay honest.</p>
+        </article>
+        <article class="docs-card">
+          <h3>Future (not in this release)</h3>
+          <p>Saved experiments, benchmark history, shareable runs, and accounts only when real persistence exists. No fake login.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <footer class="app-footer">
+    <p>ProofRun · local · free · MIT · v0.1.0</p>
+  </footer>
+
+  <script type="module" src="src/main.js"></script>
+  <script type="module" src="src/bg.js"></script>
+</body>
+</html>

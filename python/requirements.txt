@@ -1,0 +1,10 @@
+# Supported environment: Python 3.10+ (developed/tested on 3.11).
+# Install:
+#   python -m pip install -r requirements.txt
+#
+# These are minimum versions, not a fully locked lockfile.
+# Exact bit-for-bit reproducibility across machines is not claimed.
+
+pytest>=7.0,<10
+hypothesis>=6.0,<7
+jsonschema>=4.0,<5

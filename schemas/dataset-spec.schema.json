@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://proofrun.dev/schemas/dataset-spec.schema.json",
+  "title": "ProofRun DatasetSpec",
+  "type": "object",
+  "required": ["id", "kind", "seed"],
+  "properties": {
+    "id": { "type": "string" },
+    "kind": { "type": "string" },
+    "seed": { "type": "integer" },
+    "n": { "type": "integer", "minimum": 0 },
+    "params": { "type": "object" }
+  }
+}

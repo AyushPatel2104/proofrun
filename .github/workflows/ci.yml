@@ -1,0 +1,71 @@
+name: ProofRun CI
+
+# Standalone repository root = this workflow's working directory.
+# Does NOT assume a parent portfolio path (e.g. 01-FOUNDATION-ENGINEERING/01-PROOFRUN).
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install Python deps
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r python/requirements.txt
+
+      - name: Catalog generation check
+        run: python scripts/generate_catalog_artifacts.py --check
+
+      - name: Configure & build C++
+        run: |
+          cmake -S cpp -B build/cpp -DCMAKE_BUILD_TYPE=Release
+          cmake --build build/cpp --config Release -j
+
+      - name: C++ tests
+        run: ctest --test-dir build/cpp --output-on-failure
+
+      - name: Python tests
+        env:
+          PROOFRUN_CLI: ${{ github.workspace }}/build/cpp/proofrun_cli
+          PYTHONPATH: ${{ github.workspace }}/python
+          PROOFRUN_PROJECT_ROOT: ${{ github.workspace }}
+        run: python -m pytest -q python/tests
+
+      - name: Generate demo traces
+        env:
+          PROOFRUN_CLI: ${{ github.workspace }}/build/cpp/proofrun_cli
+        run: bash scripts/generate_demo_traces.sh
+
+      - name: Validate schemas (Python)
+        run: bash scripts/validate_schemas.sh
+
+      - name: Visualization contract check
+        run: python scripts/verify_viz_contract.py
+
+      - name: TypeScript contract validation
+        working-directory: tools
+        run: |
+          npm install
+          npm run validate
+
+      - name: Benchmark smoke
+        env:
+          PROOFRUN_CLI: ${{ github.workspace }}/build/cpp/proofrun_cli
+          PYTHONPATH: ${{ github.workspace }}/python
+          PROOFRUN_PROJECT_ROOT: ${{ github.workspace }}
+        run: bash scripts/bench_smoke.sh
