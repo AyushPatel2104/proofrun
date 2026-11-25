@@ -983,6 +983,10 @@ canvas { display: block; width: 100%; height: auto; background: transparent; }
     radial-gradient(360px 200px at 82% 70%, color-mix(in srgb, var(--ok) 12%, transparent), transparent 68%),
     var(--viz-bg);
 }
+/* Author display:flex must not defeat the HTML hidden attribute. */
+.empty-state[hidden] {
+  display: none !important;
+}
 .empty-state::before {
   content: "";
   position: absolute;

@@ -34,14 +34,23 @@ function setExecStatus(text) {
   if (el) el.textContent = text;
 }
 
+function setTimelineEmptyVisible(showEmpty) {
+  document.getElementById("timelineEmpty").hidden = !showEmpty;
+  timeline.hidden = showEmpty;
+}
+
 function setVizActive(active) {
   hasTrace = active;
   document.getElementById("vizEmpty").hidden = active;
   canvas.hidden = !active;
-  document.getElementById("timelineEmpty").hidden = active;
-  timeline.hidden = !active;
   document.getElementById("inspectorEmpty").hidden = active;
   inspector.hidden = !active;
+  if (!active) {
+    // Genuinely empty: restore empty-state and clear leftover event rows.
+    setTimelineEmptyVisible(true);
+    timeline.innerHTML = "";
+    inspector.textContent = "";
+  }
   setExecStatus(active ? "Trace loaded" : "Idle");
 }
 
@@ -108,8 +117,11 @@ function setProveUI(status, detail, method) {
 }
 
 function renderTimeline(events, activeIndex) {
+  const list = events || [];
+  // Empty-state tracks real event presence, not merely "a trace was loaded".
+  setTimelineEmptyVisible(list.length === 0);
   timeline.innerHTML = "";
-  (events || []).forEach((e, i) => {
+  list.forEach((e, i) => {
     const li = document.createElement("li");
     li.className = "timeline-item" + (i === activeIndex ? " active" : "");
     li.setAttribute("aria-current", i === activeIndex ? "step" : "false");
@@ -229,6 +241,8 @@ function updateAlgoContext() {
     wrap.appendChild(dd);
     mini.appendChild(wrap);
   }
+  // Analysis Complexity must track the currently selected algorithm, not a prior run.
+  setComplexity(c);
 }
 
 function renderLegend(algo) {

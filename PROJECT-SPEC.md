@@ -10,8 +10,9 @@
 | Category | `01-FOUNDATION-ENGINEERING` |
 | Project Type | Foundation |
 | Difficulty | Intermediate |
-| Deployment Class | PUBLIC DEMO (not deployed in this phase) |
-| Status | **SPECIFICATION PHASE ONLY** — implementation has NOT started |
+| Deployment Class | LOCAL-FIRST PRODUCT (optional static public demo deferred; not deployed) |
+| Version | **0.1.0** |
+| Status | **SHIPPED v0.1** — local product complete for locked scope; GitHub-published as standalone `proofrun` |
 
 ---
 
@@ -38,24 +39,26 @@ Developers often know Big-O notation but lack a reproducible way to:
 5. observe scaling across input sizes,
 6. connect claimed complexity with measured performance.
 
-## 3. Product Capabilities (Target)
+## 3. Product Capabilities (Target vs Shipped)
 
-| # | Capability | MVP | Phase 2 | Phase 3 |
+Historical target matrix is preserved. **Shipped** column reflects ProofRun **v0.1** only.
+
+| # | Capability | MVP target | Shipped in v0.1 | Later (not in release scope) |
 | --- | --- | --- | --- | --- |
-| 1 | Algorithm Library | Yes | Expand | Expand |
-| 2 | Interactive Step-by-Step Visualization | Yes (core set) | More algos | Advanced viz |
-| 3 | Execution State Inspection | Yes | Richer inspectors | Diff views |
-| 4 | Correctness Verification | Yes | Cross-impl matrix | Formal extras |
-| 5 | Property-Based Testing | Yes (selected) | Broader | Continuous corpus |
-| 6 | Complexity Analysis (documented + empirical checks) | Yes | Automated checks | Regression gates |
-| 7 | Benchmark Runner | Yes | Matrix CI | Historical trends |
-| 8 | Runtime Comparison | Yes (C++ vs Python oracle timing where fair) | Multi-impl | Cross-machine |
-| 9 | Input-Size Scaling | Yes | Curves UI | Fit heuristics |
-| 10 | Memory Measurement | Best-effort MVP | Stronger C++ path | Cross-platform |
-| 11 | Reproducible Benchmark Reports | Yes | HTML/JSON pack | CI artifacts site |
-| 12 | Algorithm Comparison | Yes (same family) | Cross-family | Catalog UI |
-| 13 | Documentation / Learning | Yes | Deeper guides | Curriculum packs |
-| 14 | CI Validation | Yes (build/test/bench-smoke) | Full matrix | Nightly benches |
+| 1 | Algorithm Library | Yes | **Yes** — 10 catalog algorithms | Expand families (e.g. trees/graphs) when authorized |
+| 2 | Interactive Step-by-Step Visualization | Yes (core set) | **Yes** — ExecutionTrace player | More algos / advanced viz |
+| 3 | Execution State Inspection | Yes | **Yes** — inspector + timeline | Richer inspectors / diff views |
+| 4 | Correctness Verification | Yes | **Yes** — independent Python oracles | Cross-impl matrix / formal extras |
+| 5 | Property-Based Testing | Yes (selected) | **Yes** — Hypothesis (selected) | Broader continuous corpus |
+| 6 | Complexity Analysis (documented + empirical checks) | Yes | **Yes** — catalog notes + UI sync | Stronger automated regression gates |
+| 7 | Benchmark Runner | Yes | **Yes** — interactive + controlled + Google Benchmark binaries | Matrix CI / historical trends |
+| 8 | Runtime Comparison | Yes (C++ vs Python oracle timing where fair) | **Partial** — C++ engine vs Python prove; honest timing labels | Multi-impl / cross-machine |
+| 9 | Input-Size Scaling | Yes | **Partial** — smoke sizes + generate presets | Curves UI / fit heuristics |
+| 10 | Memory Measurement | Best-effort MVP | **Not shipped** — `memory_bytes` remains `null` | Trustworthy cross-platform method |
+| 11 | Reproducible Benchmark Reports | Yes | **Yes** — smoke report + reproduction docs | HTML pack / CI artifacts site |
+| 12 | Algorithm Comparison | Yes (same family) | **Partial** — same-family catalog selection | Cross-family comparison UI |
+| 13 | Documentation / Learning | Yes | **Yes** — README, setup, architecture, security | Deeper curriculum packs |
+| 14 | CI Validation | Yes (build/test/bench-smoke) | **Yes** — GitHub Actions CI | Full matrix / nightly benches |
 
 ## 4. Roadmap Technology Mapping (LOCKED)
 
@@ -63,21 +66,24 @@ Do **not** replace this stack.
 
 | Technology | Mode | Responsibility |
 | --- | --- | --- |
-| **C++** | PRIMARY | Core algorithm library, CMake project, GoogleTest **or** Catch2, microbenchmarks |
-| **Python** | PRIMARY | Reference/oracle implementations, pytest, property-based tests, bench harness drivers |
-| **JavaScript** | PRIMARY | Interactive visualization runtime (framework-independent core) |
-| **TypeScript** | SECONDARY | Typed viz/docs tooling wrappers |
-| **Bash** | SECONDARY | Benchmark automation, CI scripts, matrix runners |
+| **C++** | PRIMARY | Core algorithm library, CMake project, GoogleTest, Google Benchmark microbenchmarks, `proofrun_cli` |
+| **Python** | PRIMARY | Reference/oracle implementations, pytest, property-based tests, local product server + adapter |
+| **JavaScript** | PRIMARY | Interactive visualization runtime (vanilla JS player; framework-independent) |
+| **TypeScript** | SECONDARY | Typed viz/docs tooling wrappers (`tools/`) |
+| **Bash** / **PowerShell** | SECONDARY | Build, product run, benchmark smoke, CI scripts |
 
-**AI/ML:** None in v1 (per locked roadmap).
+**AI/ML:** None in v1 (per locked roadmap). Unchanged for v0.1.
 
-## 5. Non-Goals (This Project)
+## 5. Non-Goals (This Project / v0.1)
 
 - Not a competitive programming judge that executes arbitrary user-uploaded native code publicly.
 - Not an online IDE for untrusted code execution.
 - Not a full course platform / LMS.
 - Not replacing later portfolio projects’ ML/GenAI scope.
-- No package installs or Git init in the specification phase.
+- Not multi-tenant SaaS, accounts/login, cloud workspaces, or paid hosting in this release.
+- Not GitHub Pages live Python/C++ execution (Pages, if ever added, would be canned-trace replay only).
+
+Historical note: early phases forbade package installs / Git init until authorized. Those gates have since been authorized; v0.1 is implemented, tested, and published as a standalone public repository.
 
 ## 6. Users
 
@@ -92,8 +98,10 @@ Do **not** replace this stack.
 
 - Every MVP algorithm has tests + complexity notes + bench definition + viz event model (where visualizable).
 - Benchmarks are seed-controlled and regenerable from CI scripts.
-- Public demo is static (docs + JS/WASM viz) with hard input limits.
+- Live product runs locally with hard input limits; public static demo (if added) stays canned-trace only.
 - README allows a new engineer to build, test, and reproduce a smoke benchmark without tribal knowledge.
+
+**v0.1 verification posture:** GoogleTest + pytest + catalog drift check + visualization contract + security scan + local product UI workflow (SEE / PROVE / MEASURE) for all 10 algorithms.
 
 ## 8. Relationship to Master Roadmap
 
@@ -101,8 +109,22 @@ Do **not** replace this stack.
 - **ProofRun** is the public/product brand for the same project and scope.
 - Master roadmap architecture must not be renumbered or redesigned by this project’s branding.
 
-## 9. Phase Boundary
+## 9. Phase Boundary — Shipped v0.1
 
-**This phase delivers specification documents only.**
+**Historical:** This document began as specification-only. Implementation, Git, and publication were out of scope until authorized.
 
-Implementation code, dependency installation, Git initialization, and deployment are explicitly out of scope until authorized.
+**Current (v0.1):** Scope for this release is **closed** as a local-first product:
+
+| Delivered | Detail |
+| --- | --- |
+| Algorithms | Bubble, Insertion, Selection, Merge, Quick; Linear / Binary search; Two Pointer, Sliding Window, Prefix Sum |
+| Engine | C++17 library + trusted `proofrun_cli` + ExecutionTrace schema **1.0** |
+| Product | Python localhost server (`127.0.0.1:8080`) + vanilla JS UI (dark/light) |
+| Workflow | Select → Input → Run → See → Prove → Measure |
+| Quality | GoogleTest, pytest/Hypothesis, viz contract, catalog generation check, CI |
+| Security model | Catalog-only; validated inputs; size caps; fixed CLI; `shell=False`; no secrets required |
+| Distribution | Standalone public GitHub repository; MIT; no login |
+
+**Explicitly deferred (not release scope):** additional algorithm families; trustworthy memory measurement; accounts/persistence; GitHub Pages demo deploy; hosted/multi-tenant execution; WASM live-in-browser engine.
+
+Further work requires separate authorization and must not silently expand this locked v0.1 boundary.
