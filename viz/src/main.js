@@ -6,9 +6,17 @@ const renderer = createArrayRenderer(canvas);
 const timeline = document.getElementById("timeline");
 const inspector = document.getElementById("inspector");
 
+/** Static GitHub Pages demo: set data-demo="true" on <html> by build_public_demo.py */
+const DEMO_MODE = document.documentElement.getAttribute("data-demo") === "true";
+
 let catalog = [];
 let lastRun = null;
 let hasTrace = false;
+
+function assetUrl(rel) {
+  // Resolve against document baseURI so project Pages paths (/proofrun/) work.
+  return new URL(rel, document.baseURI).href;
+}
 
 function setTheme(theme) {
   const next = theme === "light" ? "light" : "dark";
@@ -386,7 +394,9 @@ async function api(path, options) {
 }
 
 async function initCatalog() {
-  const data = await api("/api/catalog");
+  const data = DEMO_MODE
+    ? await api(assetUrl("catalog.json"))
+    : await api("/api/catalog");
   catalog = data.algorithms || [];
   const sel = document.getElementById("algoSelect");
   sel.innerHTML = "";
@@ -402,6 +412,13 @@ async function initCatalog() {
 
 async function checkHealth() {
   const el = document.getElementById("serverStatus");
+  if (DEMO_MODE) {
+    el.textContent = "Demo replay";
+    el.title =
+      "Demo replay — live Run, Prove and Measure require the local product.";
+    el.className = "engine-pill ok-text";
+    return;
+  }
   try {
     const h = await api("/api/health");
     el.textContent = h.ok ? "Local Engine · ready" : (h.message || "Engine missing");
@@ -414,13 +431,48 @@ async function checkHealth() {
   }
 }
 
+function applyDemoModeUI() {
+  if (!DEMO_MODE) return;
+  document.body.classList.add("demo-mode");
+  for (const id of ["btnRun", "btnGenerate", "btnBench"]) {
+    const el = document.getElementById(id);
+    if (!el) continue;
+    el.disabled = true;
+    el.setAttribute("aria-disabled", "true");
+    el.title =
+      "Demo replay — live Run, Prove and Measure require the local product.";
+  }
+  const runStatus = document.getElementById("runStatus");
+  if (runStatus) {
+    runStatus.textContent = "Demo replay only";
+    runStatus.className = "inline-status";
+  }
+  setProveUI(
+    "NOT_AVAILABLE",
+    "Demo replay — live Run, Prove and Measure require the local product."
+  );
+  const timing = document.getElementById("interactiveTiming");
+  if (timing) {
+    timing.textContent = "— (demo replay)";
+    timing.className = "measure-value muted-value";
+  }
+  const benchStatus = document.getElementById("benchStatus");
+  if (benchStatus) {
+    benchStatus.textContent = "Local product only";
+    benchStatus.className = "measure-value muted-value";
+  }
+}
+
 async function loadDemoTrace(url, algoId) {
   showError("");
   lastRun = null;
-  const res = await fetch(url);
+  const resolved = /^https?:\/\//i.test(url) ? url : assetUrl(url);
+  const res = await fetch(resolved);
   if (!res.ok) {
     throw new Error(
-      "Could not load demo trace.\nWhy: the canned file is missing or unreachable.\nFix: use Run for live traces."
+      DEMO_MODE
+        ? "Could not load demo trace.\nWhy: the canned file is missing or unreachable.\nFix: pick another demo from Explore."
+        : "Could not load demo trace.\nWhy: the canned file is missing or unreachable.\nFix: use Run for live traces."
     );
   }
   const trace = await res.json();
@@ -432,7 +484,9 @@ async function loadDemoTrace(url, algoId) {
   document.getElementById("resultText").textContent = "Canned demo loaded (replay only).";
   setProveUI(
     "NOT_AVAILABLE",
-    "Demo replay does not re-run correctness verification. Use Run for live verification."
+    DEMO_MODE
+      ? "Demo replay — live Run, Prove and Measure require the local product."
+      : "Demo replay does not re-run correctness verification. Use Run for live verification."
   );
   setComplexity((trace.manifestSnapshot && trace.manifestSnapshot.complexity) || {});
   document.getElementById("eventCount").textContent = String((trace.events || []).length);
@@ -496,6 +550,12 @@ window.addEventListener("hashchange", updateNavActive);
 updateNavActive();
 
 document.getElementById("btnGenerate").onclick = async () => {
+  if (DEMO_MODE) {
+    showError(
+      "Demo replay — live Run, Prove and Measure require the local product."
+    );
+    return;
+  }
   showError("");
   try {
     const data = await api("/api/generate", {
@@ -518,6 +578,12 @@ document.getElementById("btnGenerate").onclick = async () => {
 };
 
 document.getElementById("btnRun").onclick = async () => {
+  if (DEMO_MODE) {
+    showError(
+      "Demo replay — live Run, Prove and Measure require the local product."
+    );
+    return;
+  }
   showError("");
   setBusy("run", true);
   try {
@@ -540,6 +606,12 @@ document.getElementById("btnRun").onclick = async () => {
 };
 
 document.getElementById("btnBench").onclick = async () => {
+  if (DEMO_MODE) {
+    showError(
+      "Demo replay — live Run, Prove and Measure require the local product."
+    );
+    return;
+  }
   showError("");
   setBusy("bench", true);
   const out = document.getElementById("benchOut");
@@ -612,10 +684,12 @@ window.addEventListener("resize", () => {
 
 setVizActive(false);
 setTheme(document.documentElement.getAttribute("data-theme") || "dark");
+applyDemoModeUI();
 
 checkHealth()
   .then(initCatalog)
   .then(() => {
     document.getElementById("inputEditor").value = "7,3,9,1,5,2,8,4";
+    if (DEMO_MODE) applyDemoModeUI();
   })
   .catch((err) => showError(String(err.message || err)));

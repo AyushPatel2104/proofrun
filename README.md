@@ -140,11 +140,11 @@ Portfolio master roadmap remains external and locked; this list is ProofRun-loca
 | Mode | Status |
 | --- | --- |
 | **Local product** | Select → Input → Run → See → Prove → Measure (Python server + CLI) |
-| **Future free public demo** | Static GitHub Pages **SEE** via canned traces |
-| **Future live browser run** | Optional trusted WASM / free secure backend investigation |
-| **Not on Pages** | The current Python product server |
+| **Free public demo** | Static GitHub Pages **SEE** via canned ExecutionTrace demos (build: `python scripts/build_public_demo.py`) |
+| **Future live browser run** | Optional trusted WASM / free secure backend investigation (**not** this phase) |
+| **Not on Pages** | The current Python product server / C++ CLI |
 
-Details: `docs/public-demo-plan.md`. **Nothing deployed yet.**
+Details: `docs/public-demo-plan.md`. Pages workflow: `.github/workflows/pages.yml` (enable Pages → GitHub Actions when authorized).
 
 ## License
 

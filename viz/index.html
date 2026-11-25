@@ -146,7 +146,7 @@
 
       <div id="paramFields" class="params"></div>
 
-      <div class="gen-bar" role="group" aria-label="Generate input">
+      <div class="gen-bar live-only" role="group" aria-label="Generate input">
         <label class="field compact" for="genKind">Pattern
           <select id="genKind">
             <option value="random">random</option>
@@ -166,7 +166,7 @@
         <button id="btnGenerate" type="button" class="btn-secondary">Generate Input</button>
       </div>
 
-      <div class="action-row">
+      <div class="action-row live-only">
         <button id="btnRun" type="button" class="btn btn-primary btn-run">Run</button>
         <span id="runStatus" class="inline-status" aria-live="polite"></span>
       </div>
@@ -276,7 +276,7 @@
             Wall time for this single Run (includes process start). Not equivalent to rigorous benchmarking.
           </p>
         </div>
-        <div class="measure-card">
+        <div class="measure-card live-only">
           <p class="measure-label">Controlled Benchmark</p>
           <p id="benchStatus" class="measure-value muted-value">Not run yet</p>
           <p class="fine-print">Run a controlled benchmark to compare repeated measurements.</p>

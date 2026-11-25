@@ -10,7 +10,7 @@
 | Category | `01-FOUNDATION-ENGINEERING` |
 | Project Type | Foundation |
 | Difficulty | Intermediate |
-| Deployment Class | LOCAL-FIRST PRODUCT (optional static public demo deferred; not deployed) |
+| Deployment Class | LOCAL-FIRST PRODUCT + static public SEE demo (Pages enablement separate) |
 | Version | **0.1.0** |
 | Status | **SHIPPED v0.1** — local product complete for locked scope; GitHub-published as standalone `proofrun` |
 
@@ -125,6 +125,6 @@ Historical note: early phases forbade package installs / Git init until authoriz
 | Security model | Catalog-only; validated inputs; size caps; fixed CLI; `shell=False`; no secrets required |
 | Distribution | Standalone public GitHub repository; MIT; no login |
 
-**Explicitly deferred (not release scope):** additional algorithm families; trustworthy memory measurement; accounts/persistence; GitHub Pages demo deploy; hosted/multi-tenant execution; WASM live-in-browser engine.
+**Explicitly deferred (not v0.1 core product scope):** additional algorithm families; trustworthy memory measurement; accounts/persistence; hosted/multi-tenant execution; WASM live-in-browser engine. Static Pages SEE demo is implemented as a build + workflow; enabling GitHub Pages hosting remains an operator step.
 
 Further work requires separate authorization and must not silently expand this locked v0.1 boundary.
