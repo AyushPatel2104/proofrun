@@ -16,8 +16,8 @@ ROOT = Path(__file__).resolve().parents[1]
 VIZ = ROOT / "viz"
 OUT = ROOT / "site"
 
-DEMO_BANNER = (
-    "Demo replay — live Run, Prove and Measure require the local product."
+FOOTER_DISCLOSURE = (
+    "Public demo uses prerecorded traces. Live execution is available in the local product."
 )
 
 EXAMPLE_META = {
@@ -88,25 +88,14 @@ def _transform_html(html: str, *, base: str, algorithms: list[dict]) -> str:
             1,
         )
 
-    banner = f"""
-  <div class="demo-banner" role="status">
-    <p>{DEMO_BANNER}</p>
-  </div>
-"""
-    html = html.replace(
-        '<a class="skip-link" href="#workspace">Skip to workspace</a>',
-        '<a class="skip-link" href="#workspace">Skip to workspace</a>\n' + banner,
-        1,
-    )
-
     html = html.replace(
         '<p class="eyebrow">Local algorithm laboratory</p>',
-        '<p class="eyebrow">Public static demo · SEE only</p>',
+        '<p class="eyebrow">Public static demo</p>',
         1,
     )
     html = html.replace(
         '<p class="core-message">Run algorithms. See every step. Verify every result. Measure performance.</p>',
-        f'<p class="core-message">Replay real ExecutionTrace demos in the browser. {DEMO_BANNER}</p>',
+        '<p class="core-message">Replay real ExecutionTrace demos step by step in the browser.</p>',
         1,
     )
     html = html.replace(
@@ -116,17 +105,21 @@ def _transform_html(html: str, *, base: str, algorithms: list[dict]) -> str:
     )
     html = html.replace(
         "Load a real canned ExecutionTrace (replay only). Live Prove / Measure still require Run in the workspace.",
-        DEMO_BANNER,
+        "Choose a canned ExecutionTrace to explore how each algorithm moves state.",
         1,
     )
+    # Hide engine status pill on public demo (local product keeps it).
     html = html.replace(
         '<p id="serverStatus" class="engine-pill" role="status" aria-live="polite">Checking engine…</p>',
-        '<p id="serverStatus" class="engine-pill ok-text" role="status" aria-live="polite">Demo replay</p>',
+        '<p id="serverStatus" class="engine-pill" role="status" aria-live="polite" hidden></p>',
         1,
     )
     html = html.replace(
         '<p>ProofRun · local · free · MIT · v0.1.0</p>',
-        '<p>ProofRun · public demo · free · MIT · v0.1.0 · local product for live Run / Prove / Measure</p>',
+        (
+            '<p>ProofRun · public demo · free · MIT · v0.1.0</p>\n'
+            f'    <p class="demo-footer-note">{FOOTER_DISCLOSURE}</p>'
+        ),
         1,
     )
 
@@ -179,7 +172,7 @@ def build(*, base: str) -> Path:
                 "mode": "static-see-demo",
                 "algorithms": [a["id"] for a in algorithms],
                 "base": base,
-                "banner": DEMO_BANNER,
+                "footerDisclosure": FOOTER_DISCLOSURE,
             },
             indent=2,
         )

@@ -9,7 +9,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT / "scripts"))
 
-from build_public_demo import DEMO_BANNER, build  # noqa: E402
+from build_public_demo import FOOTER_DISCLOSURE, build  # noqa: E402
 
 
 def test_build_public_demo_emits_static_site(tmp_path, monkeypatch) -> None:
@@ -26,9 +26,14 @@ def test_build_public_demo_emits_static_site(tmp_path, monkeypatch) -> None:
     html = (out / "index.html").read_text(encoding="utf-8")
     assert 'data-demo="true"' in html
     assert 'class="demo-mode"' in html
-    assert DEMO_BANNER in html
     assert '<base href="/proofrun/"' in html
     assert "/api/" not in html
+    # No prominent top banner / engine badge; quiet footer disclosure only.
+    assert "demo-banner" not in html
+    assert "Demo replay — live Run, Prove and Measure require the local product." not in html
+    assert 'id="serverStatus"' in html and "hidden" in html
+    assert FOOTER_DISCLOSURE in html
+    assert 'class="demo-footer-note"' in html
 
     catalog = json.loads((out / "catalog.json").read_text(encoding="utf-8"))
     ids = [a["id"] for a in catalog["algorithms"]]
@@ -45,9 +50,12 @@ def test_build_public_demo_emits_static_site(tmp_path, monkeypatch) -> None:
     marker = json.loads((out / ".demo-build.json").read_text(encoding="utf-8"))
     assert marker["mode"] == "static-see-demo"
     assert marker["algorithms"] == ids
+    assert marker["footerDisclosure"] == FOOTER_DISCLOSURE
 
 
 def test_local_product_html_is_not_demo_by_default() -> None:
     html = (ROOT / "viz" / "index.html").read_text(encoding="utf-8")
     assert 'data-demo="true"' not in html
     assert "demo-banner" not in html
+    assert "demo-footer-note" not in html
+    assert "Checking engine" in html

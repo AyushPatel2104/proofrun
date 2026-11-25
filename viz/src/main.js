@@ -115,7 +115,9 @@ function setProveUI(status, detail, method) {
   } else if (status === "NOT_AVAILABLE") {
     badge.textContent = "Not available";
     badge.className = "status-badge warn";
-    methodEl.textContent = "Demo replay — live Prove requires Run";
+    methodEl.textContent = DEMO_MODE
+      ? "Prerecorded trace replay"
+      : "Demo replay — live Prove requires Run";
   } else {
     badge.textContent = "Awaiting run";
     badge.className = "status-badge idle";
@@ -413,12 +415,16 @@ async function initCatalog() {
 async function checkHealth() {
   const el = document.getElementById("serverStatus");
   if (DEMO_MODE) {
-    el.textContent = "Demo replay";
-    el.title =
-      "Demo replay — live Run, Prove and Measure require the local product.";
-    el.className = "engine-pill ok-text";
+    // Public demo: no engine badge; distinction lives in quiet footer copy.
+    if (el) {
+      el.hidden = true;
+      el.textContent = "";
+      el.removeAttribute("title");
+      el.className = "engine-pill";
+    }
     return;
   }
+  if (el) el.hidden = false;
   try {
     const h = await api("/api/health");
     el.textContent = h.ok ? "Local Engine · ready" : (h.message || "Engine missing");
@@ -434,31 +440,30 @@ async function checkHealth() {
 function applyDemoModeUI() {
   if (!DEMO_MODE) return;
   document.body.classList.add("demo-mode");
+  const status = document.getElementById("serverStatus");
+  if (status) {
+    status.hidden = true;
+    status.textContent = "";
+  }
   for (const id of ["btnRun", "btnGenerate", "btnBench"]) {
     const el = document.getElementById(id);
     if (!el) continue;
     el.disabled = true;
     el.setAttribute("aria-disabled", "true");
-    el.title =
-      "Demo replay — live Run, Prove and Measure require the local product.";
-  }
-  const runStatus = document.getElementById("runStatus");
-  if (runStatus) {
-    runStatus.textContent = "Demo replay only";
-    runStatus.className = "inline-status";
+    el.title = "Available in the local product";
   }
   setProveUI(
     "NOT_AVAILABLE",
-    "Demo replay — live Run, Prove and Measure require the local product."
+    "Public demo replays prerecorded traces only."
   );
   const timing = document.getElementById("interactiveTiming");
   if (timing) {
-    timing.textContent = "— (demo replay)";
+    timing.textContent = "— (prerecorded)";
     timing.className = "measure-value muted-value";
   }
   const benchStatus = document.getElementById("benchStatus");
   if (benchStatus) {
-    benchStatus.textContent = "Local product only";
+    benchStatus.textContent = "—";
     benchStatus.className = "measure-value muted-value";
   }
 }
@@ -485,7 +490,7 @@ async function loadDemoTrace(url, algoId) {
   setProveUI(
     "NOT_AVAILABLE",
     DEMO_MODE
-      ? "Demo replay — live Run, Prove and Measure require the local product."
+      ? "Public demo replays prerecorded traces only."
       : "Demo replay does not re-run correctness verification. Use Run for live verification."
   );
   setComplexity((trace.manifestSnapshot && trace.manifestSnapshot.complexity) || {});
@@ -551,9 +556,7 @@ updateNavActive();
 
 document.getElementById("btnGenerate").onclick = async () => {
   if (DEMO_MODE) {
-    showError(
-      "Demo replay — live Run, Prove and Measure require the local product."
-    );
+    showError("Generate Input is available in the local product.");
     return;
   }
   showError("");
@@ -579,9 +582,7 @@ document.getElementById("btnGenerate").onclick = async () => {
 
 document.getElementById("btnRun").onclick = async () => {
   if (DEMO_MODE) {
-    showError(
-      "Demo replay — live Run, Prove and Measure require the local product."
-    );
+    showError("Live Run is available in the local product.");
     return;
   }
   showError("");
@@ -607,9 +608,7 @@ document.getElementById("btnRun").onclick = async () => {
 
 document.getElementById("btnBench").onclick = async () => {
   if (DEMO_MODE) {
-    showError(
-      "Demo replay — live Run, Prove and Measure require the local product."
-    );
+    showError("Benchmarks are available in the local product.");
     return;
   }
   showError("");

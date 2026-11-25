@@ -46,9 +46,9 @@ python -m http.server 8765 --directory site
 # place site/* under a folder named proofrun/ and serve the parent
 ```
 
-Banner (required, exact intent):
+Disclosure (subtle footer note — not a top banner):
 
-> Demo replay — live Run, Prove and Measure require the local product.
+> Public demo uses prerecorded traces. Live execution is available in the local product.
 
 ### Deploy path (when Pages is enabled)
 
